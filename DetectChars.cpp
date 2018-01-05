@@ -412,13 +412,41 @@ std::string recognizeCharsInPlate(cv::Mat &imgThresh, std::vector<PossibleChar> 
 
         float fltCurrentChar = (float)matCurrentChar.at<float>(0, 0);       // convert current char from Mat to float
 
-        strChars = strChars + char(int(fltCurrentChar));        // append current char to full string
+        strChars += char(int(fltCurrentChar));        // append current char to full string
     }
+
+    testTess(imgThresh);
 
 #ifdef SHOW_STEPS
     cv::imshow("10", imgThreshColor);
 #endif	// SHOW_STEPS
 
     return(strChars);               // return result
+}
+
+void testTess(cv::Mat &image)
+{
+    char *outText;
+
+    auto *api = new tesseract::TessBaseAPI();
+    // Initialize tesseract-ocr with English, without specifying tessdata path
+    if (api->Init("./", "eng")) {
+        fprintf(stderr, "Could not initialize tesseract.\n");
+        exit(1);
+    }
+
+    //api->SetImage(image.data, image.cols, image.rows, 4, 4*image.cols);
+    api->SetImage((uchar*)image.data, image.size().width, image.size().height, image.channels(), image.step1());
+    api->Recognize(0);
+
+    // Get OCR result
+    outText = api->GetUTF8Text();
+    //printf("OCR output:\n%s", outText);
+    printf("Found char: %s\n", outText);
+
+    // Destroy used object and release memory
+    api->End();
+    delete [] outText;
+    //pixDestroy(&image);
 }
 

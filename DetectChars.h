@@ -3,10 +3,14 @@
 #ifndef DETECT_CHARS_H
 #define DETECT_CHARS_H
 
-#include<opencv2/core/core.hpp>
-#include<opencv2/highgui/highgui.hpp>
-#include<opencv2/imgproc/imgproc.hpp>
-#include<opencv2/ml/ml.hpp>
+#include <string>
+using std::string;
+#include <tesseract/baseapi.h>
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/ml/ml.hpp>
 
 #include "main.h"
 #include "PossibleChar.h"
@@ -68,6 +72,7 @@ std::vector<PossibleChar> removeInnerOverlappingChars(std::vector<PossibleChar> 
 
 std::string recognizeCharsInPlate(cv::Mat &imgThresh, std::vector<PossibleChar> &vectorOfMatchingChars);
 
+void testTess(cv::Mat &image);
 
 #endif	// DETECT_CHARS_H
 

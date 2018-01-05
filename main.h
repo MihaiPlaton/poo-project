@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-#define SHOW_STEPS            // un-comment or comment this line to show steps or not
+//#define SHOW_STEPS            // un-comment or comment this line to show steps or not
 
 // global constants ///////////////////////////////////////////////////////////////////////////////
 const cv::Scalar SCALAR_BLACK = cv::Scalar(0.0, 0.0, 0.0);

@@ -5,7 +5,7 @@ int main(int argc, char* argv[]) {
 
     bool blnKNNTrainingSuccessful = loadKNNDataAndTrainKNN();           // attempt KNN training
 
-    if (blnKNNTrainingSuccessful == false) {                            // if KNN training was not successful
+    if (!blnKNNTrainingSuccessful) {                                    // if KNN training was not successful
         // show error message
         std::cout << std::endl << std::endl << "error: error: KNN traning was not successful" << std::endl << std::endl;
         return(0);                                                      // and exit program
