@@ -31,7 +31,7 @@ const int MIN_PIXEL_AREA = 80;
 const double MIN_DIAG_SIZE_MULTIPLE_AWAY = 0.3;
 const double MAX_DIAG_SIZE_MULTIPLE_AWAY = 5.0;
 
-const double MAX_CHANGE_IN_AREA = 0.5;
+const double MAX_CHANGE_IN_AREA = 1;
 
 const double MAX_CHANGE_IN_WIDTH = 0.8;
 const double MAX_CHANGE_IN_HEIGHT = 0.2;
@@ -71,6 +71,8 @@ double angleBetweenChars(const PossibleChar &firstChar, const PossibleChar &seco
 std::vector<PossibleChar> removeInnerOverlappingChars(std::vector<PossibleChar> &vectorOfMatchingChars);
 
 std::string recognizeCharsInPlate(cv::Mat &imgThresh, std::vector<PossibleChar> &vectorOfMatchingChars);
+
+void recognizeCharsInPlateTesseract(cv::Mat &imgThresh, cv::Mat &imgColor, std::vector<PossibleChar> &vectorOfMatchingChars);
 
 void testTess(cv::Mat &image);
 

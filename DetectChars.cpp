@@ -181,6 +181,7 @@ std::vector<PossiblePlate> detectCharsInPlates(std::vector<PossiblePlate> &vecto
 
         // perform char recognition on the longest vector of matching chars in the plate
         possiblePlate.strChars = recognizeCharsInPlate(possiblePlate.imgThresh, longestVectorOfMatchingCharsInPlate);
+        recognizeCharsInPlateTesseract(possiblePlate.imgThresh, possiblePlate.imgPlate, longestVectorOfMatchingCharsInPlate);
 
 #ifdef SHOW_STEPS
         std::cout << "chars found in plate number " << intPlateCounter << " = " << possiblePlate.strChars << ", click on any image and press a key to continue . . ." << std::endl;
@@ -415,7 +416,7 @@ std::string recognizeCharsInPlate(cv::Mat &imgThresh, std::vector<PossibleChar> 
         strChars += char(int(fltCurrentChar));        // append current char to full string
     }
 
-    testTess(imgThresh);
+    cv::imshow("boxes", imgThreshColor);
 
 #ifdef SHOW_STEPS
     cv::imshow("10", imgThreshColor);
@@ -430,7 +431,7 @@ void testTess(cv::Mat &image)
 
     auto *api = new tesseract::TessBaseAPI();
     // Initialize tesseract-ocr with English, without specifying tessdata path
-    if (api->Init("./", "eng")) {
+    if (api->Init("./tessdata", "eng")) {
         fprintf(stderr, "Could not initialize tesseract.\n");
         exit(1);
     }
@@ -448,5 +449,61 @@ void testTess(cv::Mat &image)
     api->End();
     delete [] outText;
     //pixDestroy(&image);
+}
+
+void recognizeCharsInPlateTesseract(cv::Mat &imgThresh, cv::Mat &imgColor, std::vector<PossibleChar> &vectorOfMatchingChars) {
+    cv::Point2f top_left = cv::Point2f(vectorOfMatchingChars[0].boundingRect.x, vectorOfMatchingChars[0].boundingRect.y);
+    cv::Point2f bottom_right = cv::Point2f(vectorOfMatchingChars[vectorOfMatchingChars.size()].boundingRect.x, vectorOfMatchingChars[vectorOfMatchingChars.size()].boundingRect.y + vectorOfMatchingChars[vectorOfMatchingChars.size()].boundingRect.height);
+
+
+    cv::Rect bounding = vectorOfMatchingChars[0].boundingRect;
+    for (int i = 1; i < vectorOfMatchingChars.size(); ++i) {
+        bounding |= vectorOfMatchingChars[i].boundingRect;
+    }
+
+    cv::imshow("Bounding", imgThresh(bounding));
+    return;
+
+
+    float ratio = (float) imgColor.rows / imgThresh.rows;
+    top_left *= ratio;
+    //top_left -= cv::Point2f(2, 2);
+    bottom_right *= ratio;
+    //bottom_right += cv::Point2f(2, 2);
+
+    cv::Rect bounding_rect = cv::Rect(top_left, bottom_right);
+    cv::Mat legala = imgColor(bounding_rect);
+
+    cv::imshow("res", legala);
+
+    testTess(legala);
+
+    return;
+
+    std::string strChars;               // this will be the return value, the chars in the lic plate
+
+    // sort chars from left to right
+    std::sort(vectorOfMatchingChars.begin(), vectorOfMatchingChars.end(), PossibleChar::sortCharsLeftToRight);
+
+    printf("=========");
+    for (auto &currentChar : vectorOfMatchingChars) {           // for each char in plate
+        cv::Point2f top_left = cv::Point2f(currentChar.boundingRect.x, currentChar.boundingRect.y);
+        cv::Point2f bottom_right = cv::Point2f(currentChar.boundingRect.x + currentChar.boundingRect.width, currentChar.boundingRect.y + currentChar.boundingRect.height);
+
+        float ratio = (float) imgColor.rows / imgThresh.rows;
+        top_left *= ratio;
+        //top_left -= cv::Point2f(3, 3);
+        bottom_right *= ratio;
+        //bottom_right += cv::Point2f(3, 3);
+
+        cv::Rect bounding_rect = cv::Rect(top_left, bottom_right);
+        cv::Mat legala = imgColor(bounding_rect);
+
+        testTess(legala);
+
+        cv::rectangle(imgColor, bounding_rect, SCALAR_GREEN, 2);       // draw green box around the char
+    }
+
+    cv::imshow("asta", imgColor);
 }
 

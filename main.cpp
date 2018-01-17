@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 
     cv::Mat imgOriginalScene;           // input image
 
-    imgOriginalScene = cv::imread("image2.jpg");         // open image
+    imgOriginalScene = cv::imread(argv[1]);         // open image
 
     if (imgOriginalScene.empty()) {                             // if unable to open image
         std::cout << "error: image not read from file\n\n";     // show error message on command line
