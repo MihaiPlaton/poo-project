@@ -21,19 +21,19 @@ using std::string;
 const int MIN_PIXEL_WIDTH = 2;
 const int MIN_PIXEL_HEIGHT = 8;
 
-const double MIN_ASPECT_RATIO = 0.25;
-const double MAX_ASPECT_RATIO = 1.0;
+const double MIN_ASPECT_RATIO = 0.20;
+const double MAX_ASPECT_RATIO = 0.90;
 
 const int MIN_PIXEL_AREA = 80;
 
 // constants for comparing two chars
 const double MIN_DIAG_SIZE_MULTIPLE_AWAY = 0.3;
-const double MAX_DIAG_SIZE_MULTIPLE_AWAY = 5.0;
+const double MAX_DIAG_SIZE_MULTIPLE_AWAY = 10.0;
 
-const double MAX_CHANGE_IN_AREA = 1;
+const double MAX_CHANGE_IN_AREA = 2;
 
-const double MAX_CHANGE_IN_WIDTH = 0.8;
-const double MAX_CHANGE_IN_HEIGHT = 0.2;
+const double MAX_CHANGE_IN_WIDTH = 1.2;
+const double MAX_CHANGE_IN_HEIGHT = 0.25;
 
 const double MAX_ANGLE_BETWEEN_CHARS = 12.0;
 

@@ -94,14 +94,14 @@ void recognizeFrame(cv::Mat imgOriginalScene, std::string &name) {
     if (imgOriginalScene.empty()) {                             // if unable to open image
         std::cout << "error: image not read from file\n\n";     // show error message on command line
         cv::waitKey(0);                                         // may have to modify this line if not using Windows
-        exit(0);                                              // and exit program
+        return;                                              // and exit program
     }
 
     std::vector<PossiblePlate> vectorOfPossiblePlates = detectPlatesInScene(imgOriginalScene);          // detect plates
 
     vectorOfPossiblePlates = detectCharsInPlates(vectorOfPossiblePlates);                               // detect chars in plates
 
-    cv::imshow("imgOriginalScene", imgOriginalScene);           // show scene image
+    cv::imshow(name +"imgOriginalScene", imgOriginalScene);           // show scene image
 
     if (vectorOfPossiblePlates.empty()) {                                               // if no plates were found
         std::cout << std::endl << "no license plates were detected" << std::endl;       // inform user no plates were found
@@ -120,7 +120,7 @@ void recognizeFrame(cv::Mat imgOriginalScene, std::string &name) {
 
         if (licPlate.strChars.length() == 0) {                                                      // if no chars were found in the plate
             std::cout << std::endl << "no characters were detected" << std::endl << std::endl;      // show message
-            exit(0);                                                                              // and exit program
+            return;                                                                              // and exit program
         }
 
         drawRedRectangleAroundPlate(imgOriginalScene, licPlate);                // draw red rectangle around plate

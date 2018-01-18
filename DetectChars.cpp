@@ -435,7 +435,7 @@ void recognizeCharsInPlateTesseract(cv::Mat &imgThresh, cv::Mat &imgColor, std::
         bounding |= vectorOfMatchingChars[i].boundingRect;
     }
 
-    cv::imshow("Bounding", imgThresh(bounding));
+    //cv::imshow("Bounding", imgThresh(bounding));
     return;
 
 
