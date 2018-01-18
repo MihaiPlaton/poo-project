@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
         return(0);                                                      // and exit program
     }
 
-    if (argc < 3) {
+    if (argc < 3 || strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
         displayHelp();
         return(0);
     }
@@ -25,8 +25,6 @@ int main(int argc, char* argv[]) {
         recognizeVideos(argc, argv);
         return(0);
     }
-
-    cv::waitKey(0);                 // hold windows open until user presses a key
 
     return(0);
 }
