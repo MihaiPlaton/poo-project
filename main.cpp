@@ -152,10 +152,12 @@ void recognizePhotos(int argc, char **argv) {
 }
 
 void recognizeVideos(int argc, char **argv) {
-    std::string currentFrameName =  "laba";
+    std::string currentFrameName;
     for (int i = 2; i < argc; ++i) {
-        cv::VideoCapture cap;
-        cap.open(argv[i]);
+        currentFrameName = argv[i];
+        cv::VideoCapture cap(argv[i]);
+
+        currentFrameName = currentFrameName.substr(currentFrameName.rfind('/') + 1); //parse file name
 
         if(cap.isOpened()==0)
         {
