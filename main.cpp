@@ -58,11 +58,11 @@ void writeLicensePlateCharsOnImage(cv::Mat &imgOriginalScene, PossiblePlate &lic
 
     if (licPlate.rrLocationOfPlateInScene.center.y < (imgOriginalScene.rows * 0.75)) {      // if the license plate is in the upper 3/4 of the image
         // write the chars in below the plate
-        ptCenterOfTextArea.y = (int)std::round(licPlate.rrLocationOfPlateInScene.center.y) + (int)std::round((double)licPlate.imgPlate.rows * 1.6);
+        ptCenterOfTextArea.y = (int)std::round(licPlate.rrLocationOfPlateInScene.center.y) + (int)std::round((double)licPlate.imgPlate.rows * 1.2);
     }
     else {                                                                                // else if the license plate is in the lower 1/4 of the image
         // write the chars in above the plate
-        ptCenterOfTextArea.y = (int)std::round(licPlate.rrLocationOfPlateInScene.center.y) - (int)std::round((double)licPlate.imgPlate.rows * 1.6);
+        ptCenterOfTextArea.y = (int)std::round(licPlate.rrLocationOfPlateInScene.center.y) - (int)std::round((double)licPlate.imgPlate.rows * 1.2);
     }
 
     ptLowerLeftTextOrigin.x = (int)(ptCenterOfTextArea.x - (textSize.width / 2));           // calculate the lower left origin of the text area
@@ -134,7 +134,7 @@ void recognizeFrame(cv::Mat imgOriginalScene, std::string &name) {
 
         cv::imshow(name + "_imgOriginalScene", imgOriginalScene);                       // re-show scene image
 
-        cv::imwrite("imgOriginalScene.png", imgOriginalScene);                  // write image out to file
+        //cv::imwrite("imgOriginalScene.png", imgOriginalScene);                  // write image out to file
 
         cv::waitKey(0);
     }
@@ -143,9 +143,12 @@ void recognizeFrame(cv::Mat imgOriginalScene, std::string &name) {
 void recognizePhotos(int argc, char **argv) {
     cv::Mat imgOriginalScene;           // input image
 
-    std::string currentFrameName = "laba";
+    std::string currentFrameName;
     for (int i = 2; i < argc; ++i) {
-        imgOriginalScene = cv::imread(argv[i]);         // open image
+        currentFrameName = argv[i];
+        imgOriginalScene = cv::imread(currentFrameName);         // open image
+
+        currentFrameName = currentFrameName.substr(currentFrameName.rfind('/') + 1); //parse file name
 
         recognizeFrame(imgOriginalScene, currentFrameName);
     }
