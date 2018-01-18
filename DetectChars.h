@@ -5,7 +5,6 @@
 
 #include <string>
 using std::string;
-#include <tesseract/baseapi.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -73,8 +72,6 @@ std::vector<PossibleChar> removeInnerOverlappingChars(std::vector<PossibleChar> 
 std::string recognizeCharsInPlate(cv::Mat &imgThresh, std::vector<PossibleChar> &vectorOfMatchingChars);
 
 void recognizeCharsInPlateTesseract(cv::Mat &imgThresh, cv::Mat &imgColor, std::vector<PossibleChar> &vectorOfMatchingChars);
-
-void testTess(cv::Mat &image);
 
 #endif	// DETECT_CHARS_H
 

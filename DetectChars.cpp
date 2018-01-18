@@ -425,32 +425,6 @@ std::string recognizeCharsInPlate(cv::Mat &imgThresh, std::vector<PossibleChar> 
     return(strChars);               // return result
 }
 
-void testTess(cv::Mat &image)
-{
-    char *outText;
-
-    auto *api = new tesseract::TessBaseAPI();
-    // Initialize tesseract-ocr with English, without specifying tessdata path
-    if (api->Init("./tessdata", "eng")) {
-        fprintf(stderr, "Could not initialize tesseract.\n");
-        exit(1);
-    }
-
-    //api->SetImage(image.data, image.cols, image.rows, 4, 4*image.cols);
-    api->SetImage((uchar*)image.data, image.size().width, image.size().height, image.channels(), image.step1());
-    api->Recognize(0);
-
-    // Get OCR result
-    outText = api->GetUTF8Text();
-    //printf("OCR output:\n%s", outText);
-    printf("Found char: %s\n", outText);
-
-    // Destroy used object and release memory
-    api->End();
-    delete [] outText;
-    //pixDestroy(&image);
-}
-
 void recognizeCharsInPlateTesseract(cv::Mat &imgThresh, cv::Mat &imgColor, std::vector<PossibleChar> &vectorOfMatchingChars) {
     cv::Point2f top_left = cv::Point2f(vectorOfMatchingChars[0].boundingRect.x, vectorOfMatchingChars[0].boundingRect.y);
     cv::Point2f bottom_right = cv::Point2f(vectorOfMatchingChars[vectorOfMatchingChars.size()].boundingRect.x, vectorOfMatchingChars[vectorOfMatchingChars.size()].boundingRect.y + vectorOfMatchingChars[vectorOfMatchingChars.size()].boundingRect.height);
@@ -476,7 +450,7 @@ void recognizeCharsInPlateTesseract(cv::Mat &imgThresh, cv::Mat &imgColor, std::
 
     cv::imshow("res", legala);
 
-    testTess(legala);
+    //testTess(legala);
 
     return;
 
@@ -499,7 +473,7 @@ void recognizeCharsInPlateTesseract(cv::Mat &imgThresh, cv::Mat &imgColor, std::
         cv::Rect bounding_rect = cv::Rect(top_left, bottom_right);
         cv::Mat legala = imgColor(bounding_rect);
 
-        testTess(legala);
+        //testTess(legala);
 
         cv::rectangle(imgColor, bounding_rect, SCALAR_GREEN, 2);       // draw green box around the char
     }
