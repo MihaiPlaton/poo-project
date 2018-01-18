@@ -133,8 +133,6 @@ void recognizeFrame(cv::Mat imgOriginalScene, std::string &name) {
         cv::imshow(name + "_imgOriginalScene", imgOriginalScene);                       // re-show scene image
 
         //cv::imwrite("imgOriginalScene.png", imgOriginalScene);                  // write image out to file
-
-        cv::waitKey(0);
     }
 }
 
@@ -149,9 +147,38 @@ void recognizePhotos(int argc, char **argv) {
         currentFrameName = currentFrameName.substr(currentFrameName.rfind('/') + 1); //parse file name
 
         recognizeFrame(imgOriginalScene, currentFrameName);
+        cv::waitKey(0);
     }
 }
 
 void recognizeVideos(int argc, char **argv) {
-    printf("not yet implemented");
+    std::string currentFrameName =  "laba";
+    for (int i = 2; i < argc; ++i) {
+        cv::VideoCapture cap;
+        cap.open(argv[i]);
+
+        if(cap.isOpened()==0)
+        {
+            std::cout<<"The video file cannot be opened."<<std::endl;
+            continue;
+        }
+
+        int idx = 0;
+
+        cv::Mat frame;
+        do {
+            cap >> frame;
+
+            recognizeFrame(frame, currentFrameName);
+            cv::waitKey(1);
+
+            printf("Frame %d\n", idx);
+
+            idx++;
+            if (frame.empty()) {
+                break;
+            }
+        } while (true);
+    }
+
 }
