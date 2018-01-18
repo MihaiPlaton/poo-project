@@ -2,32 +2,32 @@
 #include "Postprocess.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
     bool blnKNNTrainingSuccessful = loadKNNDataAndTrainKNN();           // attempt KNN training
 
     if (!blnKNNTrainingSuccessful) {                                    // if KNN training was not successful
         // show error message
         std::cout << std::endl << std::endl << "error: error: KNN traning was not successful" << std::endl << std::endl;
-        return(0);                                                      // and exit program
+        return (0);                                                      // and exit program
     }
 
     if (argc < 3 || strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
         displayHelp();
-        return(0);
+        return (0);
     }
 
     if (strcmp(argv[1], "-p") == 0 || strcmp(argv[1], "--photo") == 0) {
         recognizePhotos(argc, argv);
-        return(0);
+        return (0);
     }
 
     if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--video") == 0) {
         recognizeVideos(argc, argv);
-        return(0);
+        return (0);
     }
 
-    return(0);
+    return (0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,31 +51,38 @@ void writeLicensePlateCharsOnImage(cv::Mat &imgOriginalScene, PossiblePlate &lic
     cv::Point ptLowerLeftTextOrigin;                // this will be the bottom left of the area that the text will be written to
 
     int intFontFace = CV_FONT_HERSHEY_SIMPLEX;                              // choose a plain jane font
-    double dblFontScale = (double)licPlate.imgPlate.rows / 30.0;            // base font scale on height of plate area
-    int intFontThickness = (int)std::round(dblFontScale * 1.5);             // base font thickness on font scale
+    double dblFontScale = (double) licPlate.imgPlate.rows / 40.0;            // base font scale on height of plate area
+    int intFontThickness = (int) std::round(dblFontScale * 1.5);             // base font thickness on font scale
     int intBaseline = 0;
 
-    cv::Size textSize = cv::getTextSize(licPlate.strChars, intFontFace, dblFontScale, intFontThickness, &intBaseline);      // call getTextSize
+    cv::Size textSize = cv::getTextSize(licPlate.strChars, intFontFace, dblFontScale, intFontThickness,
+                                        &intBaseline);      // call getTextSize
 
-    ptCenterOfTextArea.x = (int)licPlate.rrLocationOfPlateInScene.center.x;         // the horizontal location of the text area is the same as the plate
+    ptCenterOfTextArea.x = (int) licPlate.rrLocationOfPlateInScene.center.x;         // the horizontal location of the text area is the same as the plate
 
-    if (licPlate.rrLocationOfPlateInScene.center.y < (imgOriginalScene.rows * 0.75)) {      // if the license plate is in the upper 3/4 of the image
+    if (licPlate.rrLocationOfPlateInScene.center.y <
+        (imgOriginalScene.rows * 0.75)) {      // if the license plate is in the upper 3/4 of the image
         // write the chars in below the plate
-        ptCenterOfTextArea.y = (int)std::round(licPlate.rrLocationOfPlateInScene.center.y) + (int)std::round((double)licPlate.imgPlate.rows * 1.2);
-    }
-    else {                                                                                // else if the license plate is in the lower 1/4 of the image
+        ptCenterOfTextArea.y = (int) std::round(licPlate.rrLocationOfPlateInScene.center.y) +
+                               (int) std::round((double) licPlate.imgPlate.rows * 1.1);
+    } else {                                                                                // else if the license plate is in the lower 1/4 of the image
         // write the chars in above the plate
-        ptCenterOfTextArea.y = (int)std::round(licPlate.rrLocationOfPlateInScene.center.y) - (int)std::round((double)licPlate.imgPlate.rows * 1.2);
+        ptCenterOfTextArea.y = (int) std::round(licPlate.rrLocationOfPlateInScene.center.y) -
+                               (int) std::round((double) licPlate.imgPlate.rows * 1.1);
     }
 
-    ptLowerLeftTextOrigin.x = (int)(ptCenterOfTextArea.x - (textSize.width / 2));           // calculate the lower left origin of the text area
-    ptLowerLeftTextOrigin.y = (int)(ptCenterOfTextArea.y + (textSize.height / 2));          // based on the text area center, width, and height
+    ptLowerLeftTextOrigin.x = (int) (ptCenterOfTextArea.x - (textSize.width /
+                                                             2));           // calculate the lower left origin of the text area
+    ptLowerLeftTextOrigin.y = (int) (ptCenterOfTextArea.y + (textSize.height /
+                                                             2));          // based on the text area center, width, and height
 
     // write the text on the image
     if (licPlate.patternVerified) {
-        cv::putText(imgOriginalScene, licPlate.strChars, ptLowerLeftTextOrigin, intFontFace, dblFontScale, SCALAR_GREEN, intFontThickness);
+        cv::putText(imgOriginalScene, licPlate.strChars, ptLowerLeftTextOrigin, intFontFace, dblFontScale, SCALAR_GREEN,
+                    intFontThickness);
     } else {
-        cv::putText(imgOriginalScene, licPlate.strChars, ptLowerLeftTextOrigin, intFontFace, dblFontScale, SCALAR_YELLOW, intFontThickness);
+        cv::putText(imgOriginalScene, licPlate.strChars, ptLowerLeftTextOrigin, intFontFace, dblFontScale,
+                    SCALAR_YELLOW, intFontThickness);
     }
 }
 
@@ -108,18 +115,20 @@ void recognizeFrame(cv::Mat imgOriginalScene, std::string &name) {
 
     std::vector<PossiblePlate> vectorOfPossiblePlates = detectPlatesInScene(imgOriginalScene);          // detect plates
 
-    vectorOfPossiblePlates = detectCharsInPlates(vectorOfPossiblePlates);                               // detect chars in plates
+    vectorOfPossiblePlates = detectCharsInPlates(
+            vectorOfPossiblePlates);                               // detect chars in plates
 
-    cv::imshow(name +"imgOriginalScene", imgOriginalScene);           // show scene image
+    cv::imshow(name + "imgOriginalScene", imgOriginalScene);           // show scene image
 
     if (vectorOfPossiblePlates.empty()) {                                               // if no plates were found
-        std::cout << std::endl << "no license plates were detected" << std::endl;       // inform user no plates were found
-    }
-    else {                                                                            // else
+        std::cout << std::endl << "no license plates were detected"
+                  << std::endl;       // inform user no plates were found
+    } else {                                                                            // else
         // if we get in here vector of possible plates has at leat one plate
 
         // sort the vector of possible plates in DESCENDING order (most number of chars to least number of chars)
-        std::sort(vectorOfPossiblePlates.begin(), vectorOfPossiblePlates.end(), PossiblePlate::sortDescendingByNumberOfChars);
+        std::sort(vectorOfPossiblePlates.begin(), vectorOfPossiblePlates.end(),
+                  PossiblePlate::sortDescendingByNumberOfChars);
 
         // suppose the plate with the most recognized chars (the first plate in sorted by string length descending order) is the actual plate
         PossiblePlate licPlate = vectorOfPossiblePlates.front();
@@ -127,7 +136,8 @@ void recognizeFrame(cv::Mat imgOriginalScene, std::string &name) {
         cv::imshow(name + "_imgPlate", licPlate.imgPlate);            // show crop of plate and threshold of plate
         cv::imshow(name + "_imgThresh", licPlate.imgThresh);
 
-        if (licPlate.strChars.length() == 0) {                                                      // if no chars were found in the plate
+        if (licPlate.strChars.length() ==
+            0) {                                                      // if no chars were found in the plate
             std::cout << std::endl << "no characters were detected" << std::endl << std::endl;      // show message
             return;                                                                              // and exit program
         }
@@ -135,7 +145,8 @@ void recognizeFrame(cv::Mat imgOriginalScene, std::string &name) {
         testRegex(licPlate);
         drawRedRectangleAroundPlate(imgOriginalScene, licPlate);                // draw red rectangle around plate
 
-        std::cout << std::endl << "license plate read from image = " << licPlate.strChars << std::endl;     // write license plate text to std out
+        std::cout << std::endl << "license plate read from image = " << licPlate.strChars
+                  << std::endl;     // write license plate text to std out
         std::cout << std::endl << "-----------------------------------------" << std::endl;
 
         writeLicensePlateCharsOnImage(imgOriginalScene, licPlate);              // write license plate text on the image
@@ -169,9 +180,8 @@ void recognizeVideos(int argc, char **argv) {
 
         currentFrameName = currentFrameName.substr(currentFrameName.rfind('/') + 1); //parse file name
 
-        if(cap.isOpened()==0)
-        {
-            std::cout<<"The video file cannot be opened."<<std::endl;
+        if (cap.isOpened() == 0) {
+            std::cout << "The video file cannot be opened." << std::endl;
             continue;
         }
 

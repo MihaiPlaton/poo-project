@@ -31,6 +31,32 @@ void testRegex(PossiblePlate &plate) {
             plate.patternVerified = true;
 
             std::cout << "Found BUC pattern: " << i.str() << "\n";
+            return;
+        }
+    }
+
+    std::regex_search (plate.strChars, sm, mai);
+    for (const auto &i : sm) {
+        std::string current = i.str();
+
+        if (i.length() == 6 || i.length() == 7) {
+            plate.strChars = current;
+            plate.patternVerified = true;
+
+            std::cout << "Found MAI pattern: " << i.str() << "\n";
+            return;
+        }
+    }
+
+    std::regex_search (plate.strChars, sm, rodaj);
+    for (const auto &i : sm) {
+        std::string current = i.str();
+
+        if (i.length() == 6 || i.length() == 7) {
+            plate.strChars = current;
+            plate.patternVerified = true;
+
+            std::cout << "Found red number pattern: " << i.str() << "\n";
         }
     }
 }
