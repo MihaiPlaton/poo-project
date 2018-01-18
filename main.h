@@ -24,7 +24,7 @@ const cv::Scalar SCALAR_RED = cv::Scalar(0.0, 0.0, 255.0);
 
 // function prototypes ////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[]);
-void drawRedRectangleAroundPlate(cv::Mat &imgOriginalScene, PossiblePlate &licPlate);
+void drawRectangleAroundPlate(cv::Mat &imgOriginalScene, PossiblePlate &licPlate);
 void writeLicensePlateCharsOnImage(cv::Mat &imgOriginalScene, PossiblePlate &licPlate);
 
 void displayHelp();

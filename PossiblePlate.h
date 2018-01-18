@@ -21,6 +21,8 @@ public:
 
     std::string strChars;
 
+    bool patternVerified = false;
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     static bool sortDescendingByNumberOfChars(const PossiblePlate &ppLeft, const PossiblePlate &ppRight) {
         return(ppLeft.strChars.length() > ppRight.strChars.length());

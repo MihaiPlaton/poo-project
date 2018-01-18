@@ -243,13 +243,15 @@ std::vector<std::vector<PossibleChar> > findVectorOfVectorsOfMatchingChars(const
     // note that chars that are not found to be in a group of matches do not need to be considered further
     std::vector<std::vector<PossibleChar> > vectorOfVectorsOfMatchingChars;             // this will be the return value
 
+
     for (auto &possibleChar : vectorOfPossibleChars) {                  // for each possible char in the one big vector of chars
 
                                                                         // find all chars in the big vector that match the current char
         std::vector<PossibleChar> vectorOfMatchingChars = findVectorOfMatchingChars(possibleChar, vectorOfPossibleChars);
-
         vectorOfMatchingChars.push_back(possibleChar);          // also add the current char to current possible vector of matching chars
 
+        //printf("%d, Matching char with len (%lu)\n", ine, vectorOfMatchingChars.size());
+        //ine++;
                                                                 // if current possible vector of matching chars is not long enough to constitute a possible plate
         if (vectorOfMatchingChars.size() < MIN_NUMBER_OF_MATCHING_CHARS) {
             continue;                       // jump back to the top of the for loop and try again with next char, note that it's not necessary
@@ -303,12 +305,27 @@ std::vector<PossibleChar> findVectorOfMatchingChars(const PossibleChar &possible
         double dblChangeInWidth = (double)abs(possibleMatchingChar.boundingRect.width - possibleChar.boundingRect.width) / (double)possibleChar.boundingRect.width;
         double dblChangeInHeight = (double)abs(possibleMatchingChar.boundingRect.height - possibleChar.boundingRect.height) / (double)possibleChar.boundingRect.height;
 
+        bool bDistanceBetweenChars = dblDistanceBetweenChars < (possibleChar.dblDiagonalSize * MAX_DIAG_SIZE_MULTIPLE_AWAY);
+        bool bAngleBetweenChars = dblAngleBetweenChars < MAX_ANGLE_BETWEEN_CHARS;
+        bool bChangeInArea  = dblChangeInArea < MAX_CHANGE_IN_AREA;
+        bool bChangeInWidth = dblChangeInWidth < MAX_CHANGE_IN_WIDTH;
+        bool bChangeInHeight = dblChangeInHeight < MAX_CHANGE_IN_HEIGHT;
+
+        /*printf("========================================================================\n");
+        printf("%s with value %f => %d\n", "dblDistanceBetweenChars", dblDistanceBetweenChars, bDistanceBetweenChars);
+        printf("%s with value %f => %d\n", "dblAngleBetweenChars", dblAngleBetweenChars, bAngleBetweenChars);
+        printf("%s with value %f => %d\n", "dblChangeInArea", dblChangeInArea, bChangeInArea);
+        printf("%s with value %f => %d\n", "dblChangeInWidth", dblChangeInWidth, bChangeInWidth);
+        printf("%s with value %f => %d\n", "dblChangeInHeight", dblChangeInHeight, bChangeInHeight);
+        printf("%s with value %f => %d\n", "diagonala", possibleChar.dblDiagonalSize * MAX_DIAG_SIZE_MULTIPLE_AWAY, bDistanceBetweenChars);*/
+
         // check if chars match
-        if (dblDistanceBetweenChars < (possibleChar.dblDiagonalSize * MAX_DIAG_SIZE_MULTIPLE_AWAY) &&
-            dblAngleBetweenChars < MAX_ANGLE_BETWEEN_CHARS &&
-            dblChangeInArea < MAX_CHANGE_IN_AREA &&
-            dblChangeInWidth < MAX_CHANGE_IN_WIDTH &&
-            dblChangeInHeight < MAX_CHANGE_IN_HEIGHT) {
+        if ( bDistanceBetweenChars &&
+                bAngleBetweenChars &&
+                bChangeInArea &&
+                bChangeInWidth &&
+                bChangeInHeight
+            ) {
             vectorOfMatchingChars.push_back(possibleMatchingChar);      // if the chars are a match, add the current char to vector of matching chars
         }
     }
@@ -416,7 +433,7 @@ std::string recognizeCharsInPlate(cv::Mat &imgThresh, std::vector<PossibleChar> 
         strChars += char(int(fltCurrentChar));        // append current char to full string
     }
 
-    cv::imshow("boxes", imgThreshColor);
+    //cv::imshow("boxes", imgThreshColor);
 
 #ifdef SHOW_STEPS
     cv::imshow("10", imgThreshColor);

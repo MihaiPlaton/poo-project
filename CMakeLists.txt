@@ -4,7 +4,7 @@ project(poo_alpr)
 find_package( OpenCV REQUIRED )
 
 set(CMAKE_CXX_STANDARD 11)
-set(SOURCE_FILES main.cpp main.h DetectChars.cpp DetectChars.h DetectPlates.cpp DetectPlates.h PossibleChar.cpp PossibleChar.h PossiblePlate.cpp PossiblePlate.h Preprocess.cpp Preprocess.h)
+set(SOURCE_FILES main.cpp main.h DetectChars.cpp DetectChars.h DetectPlates.cpp DetectPlates.h PossibleChar.cpp PossibleChar.h PossiblePlate.cpp PossiblePlate.h Preprocess.cpp Preprocess.h Postprocess.cpp Postprocess.h)
 
 add_executable(poo_alpr ${SOURCE_FILES})
 
