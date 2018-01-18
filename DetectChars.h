@@ -39,6 +39,7 @@ const double MAX_ANGLE_BETWEEN_CHARS = 12.0;
 
 // other constants
 const int MIN_NUMBER_OF_MATCHING_CHARS = 3;
+const int MAX_NUMBER_OF_MATCHING_CHARS = 8;
 
 const int RESIZED_CHAR_IMAGE_WIDTH = 20;
 const int RESIZED_CHAR_IMAGE_HEIGHT = 30;

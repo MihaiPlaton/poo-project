@@ -26,7 +26,7 @@ void testRegex(PossiblePlate &plate) {
     for (const auto &i : sm) {
         std::string current = i.str();
 
-        if (i.length() == 7 || i.length() == 8) {
+        if (i.length() == 6 || i.length() == 7) {
             plate.strChars = current;
             plate.patternVerified = true;
 

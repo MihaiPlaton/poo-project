@@ -1,4 +1,5 @@
 #include "main.h"
+#include "Postprocess.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[]) {
@@ -36,7 +37,11 @@ void drawRedRectangleAroundPlate(cv::Mat &imgOriginalScene, PossiblePlate &licPl
     licPlate.rrLocationOfPlateInScene.points(p2fRectPoints);            // get 4 vertices of rotated rect
 
     for (int i = 0; i < 4; i++) {                                       // draw 4 red lines
-        cv::line(imgOriginalScene, p2fRectPoints[i], p2fRectPoints[(i + 1) % 4], SCALAR_RED, 2);
+        if (licPlate.patternVerified) {
+            cv::line(imgOriginalScene, p2fRectPoints[i], p2fRectPoints[(i + 1) % 4], SCALAR_GREEN, 2);
+        } else {
+            cv::line(imgOriginalScene, p2fRectPoints[i], p2fRectPoints[(i + 1) % 4], SCALAR_RED, 2);
+        }
     }
 }
 
@@ -67,7 +72,11 @@ void writeLicensePlateCharsOnImage(cv::Mat &imgOriginalScene, PossiblePlate &lic
     ptLowerLeftTextOrigin.y = (int)(ptCenterOfTextArea.y + (textSize.height / 2));          // based on the text area center, width, and height
 
     // write the text on the image
-    cv::putText(imgOriginalScene, licPlate.strChars, ptLowerLeftTextOrigin, intFontFace, dblFontScale, SCALAR_YELLOW, intFontThickness);
+    if (licPlate.patternVerified) {
+        cv::putText(imgOriginalScene, licPlate.strChars, ptLowerLeftTextOrigin, intFontFace, dblFontScale, SCALAR_GREEN, intFontThickness);
+    } else {
+        cv::putText(imgOriginalScene, licPlate.strChars, ptLowerLeftTextOrigin, intFontFace, dblFontScale, SCALAR_YELLOW, intFontThickness);
+    }
 }
 
 void displayHelp() {
@@ -123,6 +132,7 @@ void recognizeFrame(cv::Mat imgOriginalScene, std::string &name) {
             return;                                                                              // and exit program
         }
 
+        testRegex(licPlate);
         drawRedRectangleAroundPlate(imgOriginalScene, licPlate);                // draw red rectangle around plate
 
         std::cout << std::endl << "license plate read from image = " << licPlate.strChars << std::endl;     // write license plate text to std out

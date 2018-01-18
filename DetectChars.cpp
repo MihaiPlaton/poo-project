@@ -253,7 +253,7 @@ std::vector<std::vector<PossibleChar> > findVectorOfVectorsOfMatchingChars(const
         //printf("%d, Matching char with len (%lu)\n", ine, vectorOfMatchingChars.size());
         //ine++;
                                                                 // if current possible vector of matching chars is not long enough to constitute a possible plate
-        if (vectorOfMatchingChars.size() < MIN_NUMBER_OF_MATCHING_CHARS) {
+        if (vectorOfMatchingChars.size() < MIN_NUMBER_OF_MATCHING_CHARS || vectorOfMatchingChars.size() > MAX_NUMBER_OF_MATCHING_CHARS) {
             continue;                       // jump back to the top of the for loop and try again with next char, note that it's not necessary
                                             // to save the vector in any way since it did not have enough chars to be a possible plate
         }
