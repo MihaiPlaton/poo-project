@@ -11,52 +11,19 @@ int main(int argc, char* argv[]) {
         return(0);                                                      // and exit program
     }
 
-    cv::Mat imgOriginalScene;           // input image
-
-    imgOriginalScene = cv::imread(argv[1]);         // open image
-
-    if (imgOriginalScene.empty()) {                             // if unable to open image
-        std::cout << "error: image not read from file\n\n";     // show error message on command line
-        cv::waitKey(0);                                         // may have to modify this line if not using Windows
-        return(0);                                              // and exit program
+    if (argc < 3) {
+        displayHelp();
+        return(0);
     }
 
-    std::vector<PossiblePlate> vectorOfPossiblePlates = detectPlatesInScene(imgOriginalScene);          // detect plates
-
-    vectorOfPossiblePlates = detectCharsInPlates(vectorOfPossiblePlates);                               // detect chars in plates
-
-    cv::imshow("imgOriginalScene", imgOriginalScene);           // show scene image
-
-    if (vectorOfPossiblePlates.empty()) {                                               // if no plates were found
-        std::cout << std::endl << "no license plates were detected" << std::endl;       // inform user no plates were found
+    if (strcmp(argv[1], "-p") == 0 || strcmp(argv[1], "--photo") == 0) {
+        recognizePhotos(argc, argv);
+        return(0);
     }
-    else {                                                                            // else
-        // if we get in here vector of possible plates has at leat one plate
 
-        // sort the vector of possible plates in DESCENDING order (most number of chars to least number of chars)
-        std::sort(vectorOfPossiblePlates.begin(), vectorOfPossiblePlates.end(), PossiblePlate::sortDescendingByNumberOfChars);
-
-        // suppose the plate with the most recognized chars (the first plate in sorted by string length descending order) is the actual plate
-        PossiblePlate licPlate = vectorOfPossiblePlates.front();
-
-        cv::imshow("imgPlate", licPlate.imgPlate);            // show crop of plate and threshold of plate
-        cv::imshow("imgThresh", licPlate.imgThresh);
-
-        if (licPlate.strChars.length() == 0) {                                                      // if no chars were found in the plate
-            std::cout << std::endl << "no characters were detected" << std::endl << std::endl;      // show message
-            return(0);                                                                              // and exit program
-        }
-
-        drawRedRectangleAroundPlate(imgOriginalScene, licPlate);                // draw red rectangle around plate
-
-        std::cout << std::endl << "license plate read from image = " << licPlate.strChars << std::endl;     // write license plate text to std out
-        std::cout << std::endl << "-----------------------------------------" << std::endl;
-
-        writeLicensePlateCharsOnImage(imgOriginalScene, licPlate);              // write license plate text on the image
-
-        cv::imshow("imgOriginalScene", imgOriginalScene);                       // re-show scene image
-
-        cv::imwrite("imgOriginalScene.png", imgOriginalScene);                  // write image out to file
+    if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--video") == 0) {
+        recognizeVideos(argc, argv);
+        return(0);
     }
 
     cv::waitKey(0);                 // hold windows open until user presses a key
@@ -103,4 +70,87 @@ void writeLicensePlateCharsOnImage(cv::Mat &imgOriginalScene, PossiblePlate &lic
 
     // write the text on the image
     cv::putText(imgOriginalScene, licPlate.strChars, ptLowerLeftTextOrigin, intFontFace, dblFontScale, SCALAR_YELLOW, intFontThickness);
+}
+
+void displayHelp() {
+    printf("USAGE:\n");
+    printf("\tpoo-proiect  [-p <photo_file_path>] [-v <video_file_path>] [-h]\n");
+    printf("\n");
+    printf("\n");
+    printf("Where:\n");
+
+    printf("\n");
+    printf("\t-p <photo_file_path> OR --photo <photo_file_path>\n");
+    printf("\t\tA list of file path(s) for the photo(s) that we're going to process.\n");
+
+    printf("\n");
+    printf("\t-v <photo_file_path> OR --video <video_file_path>\n");
+    printf("\t\tFull file path for the video that we're going to process.\n");
+
+    printf("\n");
+    printf("\t-h OR --help\n");
+    printf("\t\tDisplays usage information and exits.\n");
+}
+
+void recognizeFrame(cv::Mat imgOriginalScene, std::string &name) {
+    if (imgOriginalScene.empty()) {                             // if unable to open image
+        std::cout << "error: image not read from file\n\n";     // show error message on command line
+        cv::waitKey(0);                                         // may have to modify this line if not using Windows
+        exit(0);                                              // and exit program
+    }
+
+    std::vector<PossiblePlate> vectorOfPossiblePlates = detectPlatesInScene(imgOriginalScene);          // detect plates
+
+    vectorOfPossiblePlates = detectCharsInPlates(vectorOfPossiblePlates);                               // detect chars in plates
+
+    cv::imshow("imgOriginalScene", imgOriginalScene);           // show scene image
+
+    if (vectorOfPossiblePlates.empty()) {                                               // if no plates were found
+        std::cout << std::endl << "no license plates were detected" << std::endl;       // inform user no plates were found
+    }
+    else {                                                                            // else
+        // if we get in here vector of possible plates has at leat one plate
+
+        // sort the vector of possible plates in DESCENDING order (most number of chars to least number of chars)
+        std::sort(vectorOfPossiblePlates.begin(), vectorOfPossiblePlates.end(), PossiblePlate::sortDescendingByNumberOfChars);
+
+        // suppose the plate with the most recognized chars (the first plate in sorted by string length descending order) is the actual plate
+        PossiblePlate licPlate = vectorOfPossiblePlates.front();
+
+        cv::imshow(name + "_imgPlate", licPlate.imgPlate);            // show crop of plate and threshold of plate
+        cv::imshow(name + "_imgThresh", licPlate.imgThresh);
+
+        if (licPlate.strChars.length() == 0) {                                                      // if no chars were found in the plate
+            std::cout << std::endl << "no characters were detected" << std::endl << std::endl;      // show message
+            exit(0);                                                                              // and exit program
+        }
+
+        drawRedRectangleAroundPlate(imgOriginalScene, licPlate);                // draw red rectangle around plate
+
+        std::cout << std::endl << "license plate read from image = " << licPlate.strChars << std::endl;     // write license plate text to std out
+        std::cout << std::endl << "-----------------------------------------" << std::endl;
+
+        writeLicensePlateCharsOnImage(imgOriginalScene, licPlate);              // write license plate text on the image
+
+        cv::imshow(name + "_imgOriginalScene", imgOriginalScene);                       // re-show scene image
+
+        cv::imwrite("imgOriginalScene.png", imgOriginalScene);                  // write image out to file
+
+        cv::waitKey(0);
+    }
+}
+
+void recognizePhotos(int argc, char **argv) {
+    cv::Mat imgOriginalScene;           // input image
+
+    std::string currentFrameName = "laba";
+    for (int i = 2; i < argc; ++i) {
+        imgOriginalScene = cv::imread(argv[i]);         // open image
+
+        recognizeFrame(imgOriginalScene, currentFrameName);
+    }
+}
+
+void recognizeVideos(int argc, char **argv) {
+    printf("not yet implemented");
 }

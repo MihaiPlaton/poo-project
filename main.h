@@ -27,6 +27,11 @@ int main(int argc, char* argv[]);
 void drawRedRectangleAroundPlate(cv::Mat &imgOriginalScene, PossiblePlate &licPlate);
 void writeLicensePlateCharsOnImage(cv::Mat &imgOriginalScene, PossiblePlate &licPlate);
 
+void displayHelp();
+
+void recognizeFrame(cv::Mat imgOriginalScene);
+void recognizePhotos(int argc, char* argv[]);
+void recognizeVideos(int argc, char* argv[]);
 
 # endif	// MAIN
 
